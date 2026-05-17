@@ -21,12 +21,12 @@ function RecentGames() {
       <h2 className="text-xl text-[#880011] font-bold mb-4">
         Recent Games
       </h2>
-      <div className="bg-[#F8F7F5] border border-[#C9B07A">
+      <div className="bg-[#F8F7F5]">
 
       {recentGames.map((game,index) => (
            <div
            key={index}
-           className="flex justify-between items-center py-4 border-b border-slate-300">
+           className="flex justify-between items-center py-4 border-b border-slate-300 cursor-pointer hover:bg-[#D3902F] hover:text-[#880011] transition rounded-lg">
             <p className="text-slate-700 font-bold">{game.name}</p>
             <p className="text-slate-500 font-bold">{game.score}</p>
 
