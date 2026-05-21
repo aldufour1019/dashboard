@@ -1,35 +1,23 @@
-import './App.css'
-import StatsSection from './components/StatsSection'
-import Sidebar from './components/Sidebar'
-import RecentGames from './components/RecentGames'
-import ProfileCard from './components/ProfileCard.jsx'
+import { BrowserRouter, Routes, Route }
+from 'react-router-dom'
 
-const bowler = {
-  name:"Alex"
-}
-
-
+import Dashboard from './pages/Dashboard'
+import Tournaments from './pages/Tournaments'
+import TeamTrials from './pages/TeamTrials'
+import TrialSession from './pages/TrialSession'
+import Profile from './pages/Profile'
 
 function App() {
- return (
-   <div className="bg-gradient-to-br from-[#880011] via-[#616366] to-[#D3902F] min-h-screen text-white flex">
- <Sidebar />
-  <div className="flex-1 p-10">
-    <div className="flex justify-between items-center">
-  <h1 className="text-4xl font-bold mb-8">Welcome {bowler.name}</h1>
-   <div className="mt-4"><label className="text-[#FFFFFF] mr-2">Season</label>
-    <select className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm">
-    <option>Career</option>
-    <option>26-27</option>
-    <option>25-26</option>
-    </select>
-    </div>
-</div>
-<ProfileCard />
-   <StatsSection />
-   <RecentGames />
-  </div>
-  </div>
- ) 
+  return (
+    <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Dashboard />}/>
+      <Route path="/tournaments" element={<Tournaments />} />
+      <Route path="/team-trials" element={<TeamTrials />}/>
+      <Route path="/trial-session" element={<TrialSession />}/>
+      <Route path="/profile" element={<Profile />}/>
+    </Routes>
+    </BrowserRouter>
+  )
 }
 export default App
