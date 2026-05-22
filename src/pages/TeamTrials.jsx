@@ -1,5 +1,6 @@
 import PinDeck from '../components/PinDeck'
 import Layout from '../components/layout'
+import { Link } from 'react-router-dom'
 function TeamTrials() {
     const trials = [
         {name:"Trial 1 Short", score: 215},
@@ -13,7 +14,6 @@ function TeamTrials() {
         frame:3,
         lane:16,
         status:"Active",
-        ball: "Ion Pro",
         pocket: "Yes",
         pin: 10
     }
@@ -59,9 +59,9 @@ function TeamTrials() {
                     <p className="text-slate-700">Pocket: {currentTrial.pocket}</p>
                     <p className="text-slate-700">Pins Left: {currentTrial.pin}</p>
 
-                    <button className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm">
-                    Continue Trial
-                    </button>
+                    <Link to = "/trial-session" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition">
+                    Resume Trial
+                    </Link>
             </div>
 
             <h2 className="font-bold text-xl">

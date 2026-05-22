@@ -1,7 +1,7 @@
 function PinDeck() {
     return (
         <div className="mt-8">
-            <h2 className = "font-bold text-xl mb-6">
+            <h2 className = "font-bold text-xl text-slate-700 mb-6">
                 Pins Left
             </h2>
             <div className="flex flex-col items-center gap-4">
