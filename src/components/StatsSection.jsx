@@ -8,7 +8,8 @@ function StatsSection() {
         {title: "Makeable Spare Percentage", value:"78%", trend:"↑"},
         {title:"Split Percenage", value:"83%", trend:"↓"},
         {title: "First Ball Average", value:"8.5", trend:"-"},
-        {title: "Fill Percentage", value:"76%", trend:"↓"}
+        {title: "Fill Percentage", value:"76%", trend:"↓"},
+        {title: "Frames Thrown", value:250}
 ]
 return (
     <div className="grid grid-cols-4 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
