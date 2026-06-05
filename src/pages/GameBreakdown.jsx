@@ -1,11 +1,11 @@
 import Layout from '../components/layout'
 import { Link } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 function GameBreakdown() {
     const sessionInfo ={
         bowler:"Alex",
         game:1,
-        score:192,
         date:"5/29"
     }
     
@@ -14,19 +14,12 @@ function GameBreakdown() {
         gamesCompleted:3
     }
 
-    const frameHistory = [
-        "X",
-        "9/",
-        "9-",
-        "8/",
-        "X", 
-        "9/",
-        "8/",
-        "X",
-        "X",
-        "6/X"
+    const location = useLocation()
 
-    ]
+    const frameHistory = location.state?.frameHistory || Array(10).fill("")
+    
+    const frameScores = location.state?.frameScores || Array(10).fill(0)
+
     const gamePer = [
         {stat: "Single Pin", num: 67},
         {stat: "Strike", num:50},
@@ -78,6 +71,7 @@ function GameBreakdown() {
                     </div>
                 ))}
                 </div>
+                <p className="text-slate-700">{frameScores.join(" | ")}</p>
                 <div className="flex items-center mt-8 mb-6">
                 <div className="flex-1 border-t border-[#880011]"></div>
                     <h2 className="text-2xl font-bold text-slate-700 px-4">Common Pin Leaves:</h2>

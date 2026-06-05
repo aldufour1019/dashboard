@@ -12,7 +12,7 @@ function StatsSection() {
         {title: "Frames Thrown", value:250}
 ]
 return (
-    <div className="grid grid-cols-4 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mt-10">
     {stats.map((stat,index)=>(
       <StatCard
       key={index}

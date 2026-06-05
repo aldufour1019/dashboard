@@ -188,7 +188,7 @@ const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
                 <button onClick={handlePreviousFrame} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">Previous Frame</button>
                 <button onClick={() => setTenthMark(!tenthMark)} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">Toggle 10th Mark</button>
                 <button onClick={handleNextBall} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">{currentBall == 1 ? "Next Ball" : "Advance Frame"}</button>
-                <Link to = "/game-breakdown" className="inline-block bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#d3902f] transition">Finish Game</Link>
+                <Link to = "/game-breakdown" state={{frameHistory, frameScores}} className="inline-block bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#d3902f] transition">Finish Game</Link>
             </div>
             </div>
         </Layout>
