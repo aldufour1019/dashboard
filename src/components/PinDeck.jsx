@@ -26,9 +26,9 @@ function PinDeck({standingPins, setStandingPins}) {
             </h2>
             <div className="flex flex-col items-center gap-4">
                {pinRows.map((row, index)=>(
-                <div className="flex gap-2 justify center">
-                    {row.map((pin,index)=>(
-                        <div key={index} onClick ={() => handlePinClick(pin)} className={standingPins.includes(pin) ? "w-10 h-10 rounded-full bg-[#880011] border flex items-center justify-center text-md font-bold text-white" : "w-10 h-10 rounded-full bg-[#D3902F] border flex items-center justify-center text-md font-bold text-slate-700 transition-all duration-200 scale-95"}>
+                <div key={index} className="flex gap-2 justify-center">
+                    {row.map((pin)=>(
+                        <div key={pin} onClick ={() => handlePinClick(pin)} className={standingPins.includes(pin) ? "w-10 h-10 rounded-full bg-[#880011] border flex items-center justify-center text-md font-bold text-white" : "w-10 h-10 rounded-full bg-[#D3902F] border flex items-center justify-center text-md font-bold text-slate-700 transition-all duration-200 scale-95"}>
                     {pin}
                     </div>
                     ))}
