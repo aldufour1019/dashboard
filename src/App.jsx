@@ -8,6 +8,8 @@ import TrialSession from './pages/TrialSession'
 import Profile from './pages/Profile'
 import GameBreakdown from './pages/GameBreakdown'
 import TrialBreakdown from './pages/TrialBreakdown'
+import GameHistory from './pages/GameHistory'
+import GameDetails from './pages/GameDetails'
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
       <Route path="/game-breakdown" element={<GameBreakdown />}/>
       <Route path="/trial-breakdown" element={<TrialBreakdown />}/>
       <Route path="/profile" element={<Profile />}/>
+      <Route path="/game-history" element={<GameHistory />}/>
+      <Route path="/game-details" element={<GameDetails />}/>
     </Routes>
     </BrowserRouter>
   )

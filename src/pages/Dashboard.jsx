@@ -4,6 +4,7 @@ import RecentGames from '../components/RecentGames'
 import ProfileCard from '../components/ProfileCard.jsx'
 
 function Dashboard() {
+
  return (
   <Layout>
     <div className="flex justify-between items-center">

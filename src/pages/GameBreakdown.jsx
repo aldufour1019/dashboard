@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom'
 
 function GameBreakdown() {
+    
+
     const sessionInfo ={
         bowler:"Alex",
         game:1,
@@ -15,6 +17,7 @@ function GameBreakdown() {
     }
 
     const location = useLocation()
+    const game = location.state?.game
 
     const frameHistory = location.state?.frameHistory || Array(10).fill("")
     
