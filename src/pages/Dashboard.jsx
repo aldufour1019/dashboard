@@ -2,6 +2,7 @@ import StatsSection from '../components/StatsSection'
 import Layout from '../components/layout'
 import RecentGames from '../components/RecentGames'
 import ProfileCard from '../components/ProfileCard.jsx'
+import CommonLeaves from '../components/MostCommonLeaves.jsx'
 
 function Dashboard() {
 
@@ -20,6 +21,7 @@ function Dashboard() {
     <ProfileCard />
    <StatsSection />
    <RecentGames />
+   <CommonLeaves />
    </Layout>
  ) 
 }

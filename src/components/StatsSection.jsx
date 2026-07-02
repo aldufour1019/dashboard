@@ -1,5 +1,5 @@
 import StatCard from './StatCard'
-import { calculateAverage, calculateHighGame, calculateCleanFramePct, calculateSplitConversionPct, calculateSplitLeavePct, calculateMakeableSparePct } from '../utils/bowlingStats'
+import { calculateAverage, calculateHighGame, calculateStrikePct, calculateSparePct, calculateCleanFramePct, calculateSplitConversionPct, calculateSplitLeavePct, calculateMakeableSparePct, calculateSinglePinSparePct } from '../utils/bowlingStats'
 
 function StatsSection() {
 
@@ -9,6 +9,10 @@ function StatsSection() {
 
   const highGame = calculateHighGame(games)
 
+  const strikePct = calculateStrikePct(games)
+
+  const sparePct = calculateSparePct(games)
+
   const cleanFramePct = calculateCleanFramePct(games)
 
   const splitLeavePct = calculateSplitLeavePct(games)
@@ -17,14 +21,19 @@ function StatsSection() {
 
   const makeableSparePct = calculateMakeableSparePct(games)
 
+  const singleSparePct = calculateSinglePinSparePct(games)
+
+
 
   const stats = [
     {title: "Average", value: average},
     {title: "High Game", value: highGame},
     {title: "Clean Frame %", value: `${cleanFramePct}%`},
+    {title: "Strike %", value: `${strikePct}%`},
+    {title: "Spare %", value: `${sparePct}%`},
     {title: "Split %", value: `${splitLeavePct}%`},
-    {title: "Splits Made %", value: `${splitConversionPct}%`},
-    {title: "Makeable Spare %", value:`${makeableSparePct}%`}
+    {title: "Makeable Spare %", value:`${makeableSparePct}%`},
+    {title: "Single Pin Spare %", value:`${singleSparePct}%`}
 
   ]
 return (

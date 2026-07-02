@@ -1,26 +1,38 @@
-import PinDeck from '../components/PinDeck'
 import Layout from '../components/layout'
 import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 function TeamTrials() {
+    const [selectedBowler, setSelectedBowler] = useState("Alex")
+    const [selectedLane, setSelectedLane] = useState("1")
+    const [selectedGames, setSelectedGames] = useState("3")
     const [showMenu, setShowMenu] = useState(false)
-    const trials = [
-        {name:"Trial 1 Short", score: 215},
-        {name:"Trial 2 Long", score: 186},
-        {name:"Trial 3 Medium", score: 193}
-    ]
+    const trials = JSON.parse(localStorage.getItem("trials")) || []    
 
-    const currentTrial = {
-        bowler: "Alex",
-        game:1,
-        frame:3,
-        lane:16,
-        status:"Active",
-        ball: "Ion Pro",
-        pocket: "Yes",
-        pin: 10
+    const navigate = useNavigate()
+    
+
+    const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
+    console.log("Current Trial: ", currentTrial)
+    console.log(localStorage.getItem("currentTrial"))
+
+
+    function handleStartTrial() {
+        const currentTrial = {
+            id: Date.now(),
+            bowler: selectedBowler,
+            startingLane: Number(selectedLane),
+            gamesRequired: Number(selectedGames),
+            gamesCompleted: 0,
+            status: "Active",
+            createdAt: new Date().toISOString(),
+            games: []
+            currentGame: null
+        }
+        localStorage.setItem("currentTrial", JSON.stringify(currentTrial))
+        console.log("Trial Saved", currentTrial)
+        navigate("/trial-session")
     }
-
     return (
         <Layout>
             <div className="bg-[#f8f7f5] border border-[#C9B07A] rounded-2xl p-6 mt-6 gap-6 flex flex-col">
@@ -37,20 +49,22 @@ function TeamTrials() {
                 <h2 className="font-bold text-xl text-slate-700">
                     Start Trial
                 </h2>
-                <select className="text-slate-700">
+                <select value={selectedBowler} onChange={(e) => setSelectedBowler(e.target.value)} className="text-slate-700">
                     <option>Alex</option>
                     <option>Bowler 2</option>
                 </select>
-                <select className="text-slate-700 mr-2">
-                    <option>Lane 1</option>
-                    <option>Lane 2</option>
+                <select value={selectedLane} onChange={(e) => setSelectedLane(e.target.value)} className="text-slate-700 mr-2">
+                    {Array.from({ length: 32 }, (_, i) => (
+                        <option key={i+1} value={i+1}>Lane {i + 1}</option>
+                    ))}
                 </select>
-                <select className="text-slate-700 mr-2">
-                    <option>3 Games</option>
-                    <option>4 Games</option>
+                <select value={selectedGames} onChange={(e) => setSelectedGames(e.target.value)} className="text-slate-700 mr-2">
+                    <option value="3">3 Games</option>
+                    <option value="4">4 Games</option>
+                    <option value="5">5 Games</option>
                 </select>
 
-                <button className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm">
+                <button onClick={handleStartTrial} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm">
                     Begin Trial
                 </button>
             </div>
@@ -61,14 +75,12 @@ function TeamTrials() {
                 Current Trial
             </h2>
             <div className="grid grid-cols-2 gap-4 gap-x-48 gap-y-4 max-w-2xl mx-auto">
-                    <p className="text-slate-700">Bowler: {currentTrial.bowler}</p>
-                    <p className="text-slate-700">Game: {currentTrial.game}</p>
-                    <p className="text-slate-700">Frame: {currentTrial.frame}</p>
-                    <p className="text-slate-700">Starting Lane: {currentTrial.lane}</p>
-                    <p className="text-slate-700">Status: {currentTrial.status}</p>
-                    <p className="text-slate-700">Ball: {currentTrial.ball}</p>
-                    <p className="text-slate-700">Pocket: {currentTrial.pocket}</p>
-                    <p className="text-slate-700">Pins Left: {currentTrial.pin}</p>
+                    <p className="text-slate-700">Bowler: {currentTrial?.bowler}</p>
+                    <p className="text-slate-700">Game: {(currentTrial?.gamesComplete || 0) + 1}</p>
+                    <p className="text-slate-700">Frame: {currentTrial?.frame}</p>
+                    <p className="text-slate-700">Starting Lane: {currentTrial?.lane}</p>
+                    <p className="text-slate-700">Status: {currentTrial?.status}</p>
+                    <p className="text-slate-700">Date Created: {currentTrial?.date}</p>
                     </div>
 
                     <Link to = "/trial-session" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition">
