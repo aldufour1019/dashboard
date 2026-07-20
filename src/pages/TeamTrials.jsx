@@ -13,12 +13,16 @@ function TeamTrials() {
     
 
     const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
+    const currentGame = currentTrial?.currentGame
+
+    const currentScore = currentGame?.frameScores ?.filter(score => score !== "") ?.slice(-1)[0] || 0
+
     console.log("Current Trial: ", currentTrial)
     console.log(localStorage.getItem("currentTrial"))
 
 
     function handleStartTrial() {
-        const currentTrial = {
+        const newTrial = {
             id: Date.now(),
             bowler: selectedBowler,
             startingLane: Number(selectedLane),
@@ -26,10 +30,10 @@ function TeamTrials() {
             gamesCompleted: 0,
             status: "Active",
             createdAt: new Date().toISOString(),
-            games: []
+            games: [],
             currentGame: null
         }
-        localStorage.setItem("currentTrial", JSON.stringify(currentTrial))
+        localStorage.setItem("currentTrial", JSON.stringify(newTrial))
         console.log("Trial Saved", currentTrial)
         navigate("/trial-session")
     }
@@ -69,37 +73,74 @@ function TeamTrials() {
                 </button>
             </div>
             </div>
-            
+            {currentTrial ? (
             <div className="mt-6 bg-[#f8f7f5] p-6 rounded 2xl">
             <h2 className="font-bold text-xl text-slate-700">
                 Current Trial
             </h2>
             <div className="grid grid-cols-2 gap-4 gap-x-48 gap-y-4 max-w-2xl mx-auto">
                     <p className="text-slate-700">Bowler: {currentTrial?.bowler}</p>
-                    <p className="text-slate-700">Game: {(currentTrial?.gamesComplete || 0) + 1}</p>
-                    <p className="text-slate-700">Frame: {currentTrial?.frame}</p>
-                    <p className="text-slate-700">Starting Lane: {currentTrial?.lane}</p>
+                    <p className="text-slate-700">Game: {(currentGame?.gamesCompleted || 0) + 1}{ " / "} {currentTrial?.gamesRequired}</p>
+                    <p className="text-slate-700">Frame: {currentGame?.currentFrame || 1}{"/Ball"}{currentGame?.currentBall || 1 }</p>
+                    <p className="text-slate-700">Starting Lane: {currentTrial?.startingLane}</p>
                     <p className="text-slate-700">Status: {currentTrial?.status}</p>
-                    <p className="text-slate-700">Date Created: {currentTrial?.date}</p>
+                    <p className="text-slate-700">Date Created: {currentTrial?.createdAt ? new Date(currentTrial.createdAt).toLocaleDateString() : "-"}</p>
+                    <p className="text-slate-700">Current Score: {currentScore}</p>
                     </div>
-
+{currentTrial?.status === "Active" && (
                     <Link to = "/trial-session" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition">
                     Resume Trial
                     </Link>
+)}
             </div>
+            ) : (
+                    <div className="mt-6 bg-[#f8f7f5] p-6 rounded-2xl text-center">
+
+        <h2 className="font-bold text-xl text-slate-700">
+            Current Trial
+        </h2>
+
+        <p className="text-slate-500 mt-4">
+            No active trial.
+        </p>
+
+    </div>
+
+)}
+            
 
             <h2 className="font-bold text-xl text-slate-700">
                 Recent Trials
             </h2>
            
-            {trials.map((trial,index)=>(
-                 <Link to="/trial-breakdown" key={index}>
-                 <div className="flex justify-between py-3 border-b border-slate-300 text-slate-700">
-                    <p>{trial.name}</p>
-                    <p>{trial.score}</p>
+            {trials.map((trial,index)=> {
+             const totalPins = trial.games.reduce(
+                (sum, game) => sum + game.score, 0
+             )
+             const average = trial.games.length > 0 
+             ? (totalPins / trial.games.length).toFixed(1)
+             : "-"
+            
+            return (
+
+                 <Link to="/trial-breakdown" state={{ trial }} key={index}>
+                 <div className="border-b border-slate-300 py-4 hover:bg-slate-100 transition rounded-lg px-4">
+                    <div className="flex justify-between text-slate-700">
+                    <p>{trial.bowler}</p>
+                    <span className = "text-sm text-slate-500">
+                        {trial.status}
+                    </span>
+                    </div>
+                    <div className ="grid grid-cols-2 mt-2 text-slate-600 text-sm">
+                        <p>Games: {trial.games.length}/{trial.gamesRequired}</p>
+                        <p>Average: {average} </p>
+                        <p>Total Pins: {totalPins} </p>
+                        <p>{new Date(trial.createdAt).toLocaleDateString()}</p>
+                    </div>
                     </div>
                     </Link>
-            ))}
+            )
+        })}
             </div>
     </Layout>
     )

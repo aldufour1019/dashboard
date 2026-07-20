@@ -1,6 +1,7 @@
 import Layout from '../components/layout'
 import { Link } from 'react-router-dom'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 import { calculateStrikePct, calculateSparePct, calculateSinglePinSparePct, calculateMakeableSparePct, getMostCommonLeaves, calculateAverage, calculateHighGame} from "../utils/bowlingStats"
 
 function TrialBreakdown() {
@@ -8,12 +9,53 @@ function TrialBreakdown() {
 
     const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
 
+    useEffect(() => {
+        if (!currentTrial) return
+        if (currentTrial.status !== "Complete") return
+
+        const trials = JSON.parse(localStorage.getItem("trials")) || []
+
+        const alreadyExists = trials.some(
+            trial => trial.id === currentTrial.id
+        )
+        if (!alreadyExists) {
+            trials.push(currentTrial)
+            localStorage.setItem("trials", JSON.stringify(trials))
+        }
+
+        localStorage.removeItem("currentTrial")
+    }, [])
+
     console.log(currentTrial)
 
 
 
     const location = useLocation()
-    const games = currentTrial?.games || []
+    const trial = location.state?.trial
+    const games = trial?.games || []
+
+    const trialComplete = trial?.gamesCompleted >= trial?.gamesRequired
+
+    const navigate = useNavigate()
+
+    function finishTrial() {
+        const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
+
+        if (!currentTrial) {
+            navigate("/team-trials")
+            return
+        }
+
+        const trials = JSON.parse(localStorage.getItem("trials")) || []
+
+        trials.push(currentTrial)
+
+        localStorage.setItem("trials", JSON.stringify(trials))
+
+        localStorage.removeItem("currentTrial")
+
+        navigate("/team-trials")
+    }
 
     const totalPins = games.reduce((sum, game) => sum + game.score, 0)
     
@@ -35,9 +77,9 @@ function TrialBreakdown() {
                 Trial Breakdown
             </h1>
             <div className="grid grid-cols-2 gap-4 gap-x-48 gap-y-4 max-w-md mx-auto">
-                <div><p className = "text-slate-700 font-bold">Bowler: {currentTrial?.bowler}</p></div>
-                <div><p className = "text-slate-700 font-bold">Games: {currentTrial?.gamesCompleted}/{currentTrial?.gamesRequired}</p></div>
-                <div><p className = "text-slate-700 font-bold">Status: {currentTrial?.status}</p></div>
+                <div><p className = "text-slate-700 font-bold">Bowler: {trial?.bowler}</p></div>
+                <div><p className = "text-slate-700 font-bold">Games: {trial?.gamesCompleted}/{currentTrial?.gamesRequired}</p></div>
+                <div><p className = "text-slate-700 font-bold">Status: {trial?.status}</p></div>
                 <div><p className = "text-slate-700 font-bold">Average: {calculateAverage(games)}</p></div>
                 <div><p className = "text-slate-700 font-bold">High Game: {calculateHighGame(games)}</p></div>
             </div>
@@ -89,7 +131,13 @@ function TrialBreakdown() {
                         <div className="justify-self-start">
                         <Link to = "/team-trials" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition ">Trials Homepage</Link>
                         </div>
-                        <div className="justify-self-center"></div>
+                        <div className="justify-self-center">
+                            {trialComplete ? (
+                            <Link to="/team-trials" onClick={finishTrial} className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition ">Finish Trial</Link>
+                            ) : (
+                            <Link to="/trial-session" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition ">Continue Trial</Link>
+                )}
+                        </div>
                         <div className="justify-self-end">
                         <Link to = "/" className="inline-block mt-4 bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#880011] transition">Main Dashboard</Link>
                         </div>

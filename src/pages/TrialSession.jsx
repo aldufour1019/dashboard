@@ -1,14 +1,15 @@
 import Layout from '../components/layout'
 import PinDeck from '../components/PinDeck'
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
-import { useNavigate } from "react-router-dom"
+import { useState, useEffect } from 'react'
+import { useNavigate, useLocation } from "react-router-dom"
 import { splitLeaves } from "../utils/splitLeaves"
 
 //Known Bug to Fix Later: If a person were to go back and fix the frame before mid frame, scoring will mess up.
 function TrialSession() {
 
     const navigate = useNavigate()
+    const location = useLocation()
     
     const currentTrial = 
     JSON.parse(localStorage.getItem("currentTrial"))
@@ -27,22 +28,83 @@ function TrialSession() {
         [1,3,4,6,7]
     ]
 
-    const [notes, setNotes] = useState({})
     const savedGame = currentTrial?.currentGame
 
     const [currentFrame, setCurrentFrame] = useState(savedGame?.currentFrame || 1)
     const [currentBall, setCurrentBall] = useState(savedGame?.currentBall || 1)
-    const [frameHistory, setFrameHistory] = useState(savedGame?.frameHistroy || Array(10).fill(""))
-    const [frameScore, setFrameScore] = useState(savedGame?.frameScores || Array(10).fill(""))
+    const [frameHistory, setFrameHistory] = useState(savedGame?.frameHistory || Array(10).fill(""))
+    const [frameScores, setFrameScores] = useState(savedGame?.frameScores || Array(10).fill(""))
     const [rolls, setRolls] = useState(savedGame?.rolls || [])
     const [standingPins, setStandingPins] = useState(savedGame?.standingPins || [1,2,3,4,5,6,7,8,9,10])
+    const [shotHistory, setShotHistory] = useState(savedGame?.shotHistory || {})
+    const [splitFrames, setSplitFrames] = useState(savedGame?.splitFrames || [])
+    const [firstBallLeave, setFirstBallLeave] = useState(savedGame?.firstBallLeave || 0)
+    const [notes, setNotes] = useState(savedGame?.notes || {})
     console.log("Current Ball:", currentBall)
+    useEffect(() => {
+        const savedGame = currentTrial?.currentGame
+
+        if (!savedGame) {
+            setCurrentFrame(1)
+            setCurrentBall(1)
+            setFrameHistory(Array(10).fill(""))
+            setFrameScores(Array(10).fill(""))
+            setRolls([])
+            setStandingPins([1,2,3,4,5,6,7,8,9,10])
+            setShotHistory({})
+            setSplitFrames([])
+            setFirstBallLeave(0)
+            setNotes({})
+        }
+
+    }, [location.key, currentTrial?.gamesCompleted])
+    useEffect(() => {
+        
+
+        if (!currentTrial) return
+        
+        const updatedTrial = {
+            ...currentTrial,
+            currentGame: {
+                currentFrame, currentBall, frameHistory, frameScores, rolls, standingPins, shotHistory, splitFrames, firstBallLeave, notes
+            }
+        }
+
+        localStorage.setItem("currentTrial", JSON.stringify(updatedTrial))
+    }, [
+        currentFrame, currentBall, frameHistory, frameScores, rolls, standingPins, shotHistory, splitFrames, firstBallLeave, notes, currentTrial
+    ])
 
 function finishGame() {
-    const completedGame = saveGame()
+   const finalShot = saveCurrentShot()
 
-    navigate("/game-breakdown", {
-        state: {game: completedGame}
+    const completedGame = {
+        date: new Date().toISOString(),
+        score: finalShot.frameScores
+            .filter(score => score !== "")
+            .slice(-1)[0] || 0,
+        frameHistory: finalShot.frameHistory,
+        frameScore: finalShot.frameScores,
+        rolls: finalShot.rolls,
+        splitFrames,
+        shotHistory,
+        notes
+    }
+
+    const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
+
+    currentTrial.games.push(completedGame)
+    currentTrial.currentGame = null
+    currentTrial.gamesCompleted += 1
+
+    if (currentTrial.gamesCompleted >= currentTrial.gamesRequired) {
+        currentTrial.status = "Complete"
+    }
+    
+    localStorage.setItem("currentTrial", JSON.stringify(currentTrial))
+
+    navigate("/trial-breakdown", {
+        state: {trial: currentTrial}
     })
 }
 function isSplit(leave) {
@@ -51,7 +113,11 @@ function isSplit(leave) {
         split => split.length === sortedLeave.length && split.every((pin, index) => pin === sortedLeave[index])
     )
 }
-    function handleNextBall() {
+ function handleNextBall() {
+    if (gameComplete) {
+        finishGame()
+        return
+    }
         saveCurrentShot()
         if (currentFrame < 10) {
         if (currentBall === 1 ) {
@@ -102,13 +168,7 @@ function isSplit(leave) {
         
 
     }
-}
-function isSplit(leave) {
-    const sortedLeave = [...leave].sort((a,b) => a-b)
-
-    return splitLeaves.some(split => 
-        split.length === sortedLeave.length && split.every((pin, index) => pin === sortedLeave[index])
-    )
+    
 }
  function handlePreviousFrame() {
       if (currentFrame === 1) {
@@ -214,8 +274,6 @@ function isSplit(leave) {
             else {
             pinsKnockedDown = firstBallLeave - standingPins.length
         }
-
-        saveCurrentProgress()
     }
 
         const newRolls = [...rolls, pinsKnockedDown]
@@ -316,6 +374,12 @@ function isSplit(leave) {
         }
         setFrameHistory(updatedFrames)
         //setFrameScores(updatedScores)
+
+        return {
+            rolls: newRolls,
+            frameHistory: updatedFrames,
+            frameScores: calculatedScores
+        }
     }
     function invertPins() {
         const allPins = [1,2,3,4,5,6,7,8,9,10]
@@ -324,17 +388,6 @@ function isSplit(leave) {
             pin => !standingPins.includes(pin)
         ))
     }
-
-const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
-
-    const [frameHistory, setFrameHistory] = 
-        useState(Array(10).fill(""))
-    const [firstBallLeave, setFirstBallLeave] = useState(0)  
-    const [shotHistory, setShotHistory] = useState({})
-    const [frameScores, setFrameScores] = useState(Array(10).fill(0))
-    const [rolls, setRolls] = useState([])
-    const [splitFrames, setSplitFrames] = useState([])
-    console.log("rolls :", rolls)
 
     const currentScore = 
     frameScores
@@ -382,6 +435,8 @@ const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
         }
 
         currentTrial.games.push(completedGame)
+        currentTrial.currentGame = null
+        
 
         currentTrial.gamesCompleted += 1
 
@@ -394,13 +449,7 @@ const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
         return completedGame
     }
 
-    function saveCurrentProgress() {
-        const currentTrial = JSON.parse(localStorage.getItem("currentTrial"))
-
-        currentTrial.currentGame = {currentFrame, currentBall, frameHistroy, frameScores, rolls, standingPins, shotHistroy, splitFrames, firstBallLeave, notes}
-
-        localStorage.setItem("currentTrial", JSON.stringify(currentTrial))
-    }
+   const gameComplete = currentFrame === 10 && ((currentBall === 2 && firstBallLeave !== 0 && standingPins.length > 0) || currentBall === 3)
 
    const showInvertButton = currentBall === 1 || (currentFrame === 10 && firstBallLeave === 0)
     return (
@@ -411,9 +460,9 @@ const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
 
             <div className="mt-8 bg-[#F8F7F5] border border-[#C9B07A] rounded-2xl p-6 text-slate-700">
                 <p>Bowler: {currentTrial?.bowler}</p>
-                <p>Game: {currentTrial?.game}</p>
+                <p>Game: {(currentTrial?.gamesCompleted || 0) + 1}</p>
                 <p>Frame/Ball: {currentFrame}/{currentBall}</p>
-                <p>Lane: {currentTrial?.lane}</p>
+                <p>Lane: {currentTrial?.startingLane}</p>
                 <p>Current Score: {currentScore}</p>
                 <p>Ball Used: {currentTrial?.ball}</p>
                 <p>Games: {currentTrial?.gamesCompleted}/{currentTrial.gamesRequired}</p>
@@ -489,8 +538,8 @@ const [standingPins, setStandingPins] = useState([1,2,3,4,5,6,7,8,9,10])
             </div>
             <div className="flex items-center justify-center">
                 <button onClick={handlePreviousFrame} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">Previous Frame</button>
-                <button onClick={handleNextBall} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">{currentBall == 1 ? "Next Ball" : "Advance Frame"}</button>
-                <button onClick={finishGame} className="inline-block bg-[#1c1c1c]/70 backdrop-blur-md text-white px-4 py-2 rounded-lg hover:bg-[#d3902f] transition">Finish Game</button>
+                <button onClick={handleNextBall} className="bg-[#1c1c1c]/70 backdrop-blur-md border border-[#c9B07A] rounded-lg px-3 py-2 text-[#FFFFFF] shadow-sm mr-2 hover:bg-[#d3902f] transition duration-300">{gameComplete ? "Finish Game" : currentBall === 1 ? "Next Ball" : "Advance Frame"}</button>
+                
             </div>
             </div>
         </Layout>
