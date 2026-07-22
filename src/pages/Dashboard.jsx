@@ -7,7 +7,8 @@ import CommonLeaves from '../components/MostCommonLeaves.jsx'
 function Dashboard() {
 
  return (
-  <Layout>
+  <>
+    
     <div className="flex justify-between items-center">
   <h1 className="text-4xl font-bold mb-8">Welcome Alex</h1>
    <div className="mt-4"><label className="text-[#FFFFFF] mr-2">Season</label>
@@ -22,7 +23,7 @@ function Dashboard() {
    <StatsSection />
    <RecentGames />
    <CommonLeaves />
-   </Layout>
+   </>
  ) 
 }
 export default Dashboard

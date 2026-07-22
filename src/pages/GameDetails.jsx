@@ -45,7 +45,7 @@ const splitPct = splitCount === 0
     ]
     
     return (
-<Layout>
+<>
         <div className="bg-[#f8f7f5] border border-[#C9B07A] rounded-2xl p-6 mt-6 gap-6 flex flex-col">
             
             <h1 className = "text-slate-700 text-4xl font-bold items text-center">
@@ -99,7 +99,7 @@ const splitPct = splitCount === 0
                      </div>
                      </div>                    
         </div>
-</Layout>
+</>
     )
 }
 export default GameBreakdown

@@ -8,7 +8,7 @@ function GameHistory() {
 
     
 return (
-    <Layout>
+    <>
         <h1 className = "text-4x1 font-bold">Game History</h1>
     
     <div className = "mt-6 space-y-4">
@@ -43,7 +43,7 @@ return (
         )
     })}
     </div>
-    </Layout>
+    </>
 )
 
 }

@@ -1,6 +1,5 @@
-import { BrowserRouter, Routes, Route }
-from 'react-router-dom'
-
+import { BrowserRouter, Routes, Route }from 'react-router-dom'
+import Layout from "./components/Layout"
 import Dashboard from './pages/Dashboard'
 import Tournaments from './pages/Tournaments'
 import TeamTrials from './pages/TeamTrials'
@@ -11,10 +10,12 @@ import TrialBreakdown from './pages/TrialBreakdown'
 import GameHistory from './pages/GameHistory'
 import GameDetails from './pages/GameDetails'
 
+
 function App() {
   return (
     <BrowserRouter>
     <Routes>
+      <Route element={<Layout />}>
       <Route path="/" element={<Dashboard />}/>
       <Route path="/tournaments" element={<Tournaments />} />
       <Route path="/team-trials" element={<TeamTrials />}/>
@@ -24,6 +25,7 @@ function App() {
       <Route path="/profile" element={<Profile />}/>
       <Route path="/game-history" element={<GameHistory />}/>
       <Route path="/game-details" element={<GameDetails />}/>
+      </Route>
     </Routes>
     </BrowserRouter>
   )

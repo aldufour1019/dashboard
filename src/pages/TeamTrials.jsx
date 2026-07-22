@@ -38,7 +38,7 @@ function TeamTrials() {
         navigate("/trial-session")
     }
     return (
-        <Layout>
+        <>
             <div className="bg-[#f8f7f5] border border-[#C9B07A] rounded-2xl p-6 mt-6 gap-6 flex flex-col">
             <h1 className="font-bold text-xl text-slate-700">
                 Team Trials
@@ -142,7 +142,7 @@ function TeamTrials() {
             )
         })}
             </div>
-    </Layout>
+    </>
     )
 }
 export default TeamTrials
